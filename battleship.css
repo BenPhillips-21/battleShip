@@ -1,0 +1,13 @@
+.clickable-div {
+    background-color: #f8d112;
+    padding: 70px;
+    margin: 2px;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+    color: #FA26A0;
+    font-size: 8rem;
+    font-family: 'Permanent Marker', cursive;
+    position: relative; 
+}
