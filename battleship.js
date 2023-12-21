@@ -138,10 +138,10 @@ const leFleet2 = [carrier2, battleship2, destroyer2, submarine2, patrolboat2];
 const player1 = createPlayer("Admiral Nelson", leFleet1);
 const player2 = createPlayer("Computer", leFleet2);
 
-let result = gameboard.checkFleet(player1.fleet);
-console.log(result)
-gameboard.receiveShip(0, 0, "vertical", player1.fleet[0], player1)
-gameboard.receiveAttack(0, 0, player1)
+// let result = gameboard.checkFleet(player1.fleet);
+// console.log(result)
+// gameboard.receiveShip(0, 0, "vertical", player1.fleet[0], player1)
+// gameboard.receiveAttack(0, 0, player1)
 
 gameboard.printBoard(player1)
 gameboard.printBoard(player2);
@@ -155,36 +155,54 @@ console.log(player2.name)
 let x = gameboard.checkFleet(player2.fleet);
 console.log(x);
 
-
-let shipsPlaced = false;
-let isPlayer1Turn = true;
 let shipNames = ["carrier", "battleship", "destroyer", "submarine", "patrolboat"];
 
-// while (true) {
-//   if (isPlayer1Turn) {
-//     if (shipsPlaced === false) {
-//       for (var i = 0; i < player1.fleet.length; i++) {
-//         gameboard.printBoard(player1);
-//         console.log(`At what coordinates will you place your ${shipNames[i]} ${player1.name}?`);
-//         let x = parseInt(readline.question(`At which X coordinate shall the ${shipNames[i]} be placed ${player1.name}? \n`));
-//         let y = parseInt(readline.question(`At which Y coordinate shall the ${shipNames[i]} be placed ${player1.name}? \n`));
-//         let direction = readline.question(`Shall the ship be placed vertically or horizontally ${player1.name}? horizontal / vertical \n`);
-//         let result = gameboard.receiveShip(x, y, direction, player1.fleet[i], player1);
-//         if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
-//           console.log(result)
-//           i--
-//           }
-//         };
-//         shipsPlaced = true;
-//         gameboard.printBoard(player2)
-//         console.log(shipsPlaced)
-//       }
-//     }
-//     isPlayer1Turn = false;
-//   } 
+for (var i = 0; i < player1.fleet.length; i++) {
+  gameboard.printBoard(player1);
+  console.log(`At what coordinates will you place your ${shipNames[i]} ${player1.name}?`);
+  let x = parseInt(readline.question(`At which X coordinate shall the ${shipNames[i]} be placed ${player1.name}? \n`));
+  let y = parseInt(readline.question(`At which Y coordinate shall the ${shipNames[i]} be placed ${player1.name}? \n`));
+  let direction = readline.question(`Shall the ship be placed vertically or horizontally ${player1.name}? horizontal / vertical \n`);
+  let result = gameboard.receiveShip(x, y, direction, player1.fleet[i], player1);
+    if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
+        console.log(result)
+        i--
+      }
+  };
+for (var i = 0; i < player2.fleet.length; i++) {
+  let x = Math.floor(Math.random() * 9) + 1;
+  let y = Math.floor(Math.random() * 9) + 1;
+  let direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+  let result = gameboard.receiveShip(x, y, direction, player2.fleet[i], player2)
+    if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
+        i--;
+    }
+}
+gameboard.printBoard(player2)
 
+console.log(`${player1.name}, it is time to attack!`);
 
-// console.log("Game over");
+let isPlayer1Turn = true;
+
+while (isPlayer1Turn) {
+  gameboard.printBoard(player2);
+  let x = parseInt(readline.question(`At which X coordinate shall we send our shot ${player1.name}? \n`));
+  let y = parseInt(readline.question(`And at which Y coordinate Admiral? \n`));
+  let result = gameboard.receiveAttack(x, y, player2);
+  console.log(result)
+  if (result === "The fleet has been destroyed!") {
+    console.log(`The enemy fleet has been destroyed ${player1.name}! Victory is ours!`)
+  }
+  let a = Math.floor(Math.random() * 9) + 1;
+  let b = Math.floor(Math.random() * 9) + 1;
+  let outcome = gameboard.receiveAttack(a, b, player1);
+  console.log(outcome)
+    if (result === "The fleet has been destroyed!") {
+      console.log(`We have been defeated ${player1.name}...`);
+    }
+} 
+
+console.log("Game over");
 
 
 // module.exports = { ship, gameboard, ships };
