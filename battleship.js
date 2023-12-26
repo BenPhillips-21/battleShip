@@ -112,6 +112,8 @@ checkFleet: function(playerFleet) {
   },
 };
 
+console.log(gameboard.leBoard[1][0])
+console.log('le print')
 const createPlayer = (name, fleet) => {
   return {
     name,
@@ -184,21 +186,50 @@ console.log(`${player1.name}, it is time to attack!`);
 
 let isPlayer1Turn = true;
 
-while (isPlayer1Turn) {
-  gameboard.printBoard(player2);
+const sendShot = () => {
   let x = parseInt(readline.question(`At which X coordinate shall we send our shot ${player1.name}? \n`));
   let y = parseInt(readline.question(`And at which Y coordinate Admiral? \n`));
-  let result = gameboard.receiveAttack(x, y, player2);
+
+  if (player2.board[x][y] === 'X') {
+    console.log("You've already fired a shot there Admiral! Let's try again...");
+    let result = sendShot()
+    return result
+  }
+  return [x, y]
+};
+
+const computerSendShot = () => {
+  let a = Math.floor(Math.random() * 9) + 1;
+  let b = Math.floor(Math.random() * 9) + 1;
+
+    if (player1.board[a][b] === 'X') {
+    let result = computerSendShot()
+    return result
+  }
+  return [a, b]
+}
+
+
+while (isPlayer1Turn) {
+  gameboard.printBoard(player2);
+  let shotCoords = sendShot()
+  let result = gameboard.receiveAttack(shotCoords[0], shotCoords[1], player2);
   console.log(result)
   if (result === "The fleet has been destroyed!") {
     console.log(`The enemy fleet has been destroyed ${player1.name}! Victory is ours!`)
+    break
   }
-  let a = Math.floor(Math.random() * 9) + 1;
-  let b = Math.floor(Math.random() * 9) + 1;
-  let outcome = gameboard.receiveAttack(a, b, player1);
-  console.log(outcome)
-    if (result === "The fleet has been destroyed!") {
+  let computerShotCoords = computerSendShot()
+  let outcome = gameboard.receiveAttack(computerShotCoords[0], computerShotCoords[1], player1);
+    if (outcome === "Direct hit!") {
+      console.log("We've taken a hit Admiral!")
+    }
+    if (outcome === "Miss!") {
+      console.log("The enemy have missed us!")
+    }
+    if (outcome === "The fleet has been destroyed!") {
       console.log(`We have been defeated ${player1.name}...`);
+      break
     }
 } 
 
