@@ -95,7 +95,7 @@ checkFleet: function(playerFleet) {
           player.fleet[i].hit();
           player.fleet[i].isSunk();
           console.log(player.fleet[i])
-          player.board[coordX][coordY] = "X";
+          player.board[coordX][coordY] = "H";
           let result = gameboard.checkFleet(player.fleet);
           console.log(result);
           if (result === "The fleet has been destroyed!") {
@@ -106,7 +106,7 @@ checkFleet: function(playerFleet) {
         }
       }
     } else {
-      player.board[coordX][coordY] = "X";
+      player.board[coordX][coordY] = "M";
       return "Miss!";
     }
   },
@@ -190,24 +190,86 @@ const sendShot = () => {
   let x = parseInt(readline.question(`At which X coordinate shall we send our shot ${player1.name}? \n`));
   let y = parseInt(readline.question(`And at which Y coordinate Admiral? \n`));
 
-  if (player2.board[x][y] === 'X') {
-    console.log("You've already fired a shot there Admiral! Let's try again...");
-    let result = sendShot()
-    return result
+  if (isNaN(x) || isNaN(y)) {
+    console.log("Please enter valid coordinates!");
+    return sendShot(); 
   }
-  return [x, y]
+
+  if (x < 0 || x > 9 || y < 0 || y > 9) {
+    console.log("Please enter coordinates within the valid range (0-9)!");
+    return sendShot(); 
+  }
+
+  if (player2.board[x][y] === "M" || player2.board[x][y] === "H") {
+    console.log("You've already fired a shot there Admiral! Let's try again...");
+    return sendShot(); 
+  }
+
+  return [x, y];
 };
 
+const checkIfLegal = (x, y) => {
+  if (!player1.board[x] || !player1.board[x][y]) {
+    return 'Illegal';
+  }
+  if (player1.board[x][y] === "M" || player1.board[x][y] === "H") {
+    return 'Illegal'
+  }
+  if (x > 9 || y > 9) {
+    return 'Illegal'
+  }
+  return 'Legal'
+}
+
 const computerSendShot = () => {
+console.log(player1.board)
+  for (let i = 0; i < player1.board.length; i++) {
+    for (let j = 0; j < player1.board[i].length; j++) {
+      if (player1.board[i][j] === "H") {
+        let a = i;
+        a++;
+        let b = i;
+        b--;
+        let c = j;
+        c++;
+        let d = j;
+        d--;
+
+        let r1 = checkIfLegal(a, j);
+        if (r1 === 'Legal') {
+          return [a, j];
+        }
+
+        let r2 = checkIfLegal(b, j);
+        if (r2 === 'Legal') {
+          return [b, j];
+        }
+
+        let r3 = checkIfLegal(i, c);
+        if (r3 === 'Legal') {
+          return [i, c];
+        }
+
+        let r4 = checkIfLegal(i, d);
+        if (r4 === 'Legal') {
+          return [i, d];
+        }
+        // if all moves are illegal, then do a random shot LOL
+      }
+    }
+  }
+
   let a = Math.floor(Math.random() * 9) + 1;
   let b = Math.floor(Math.random() * 9) + 1;
-
-    if (player1.board[a][b] === 'X') {
-    let result = computerSendShot()
-    return result
+  
+  if (player1.board[a][b] === "M" || player1.board[a][b] === "H") {
+    let result = computerSendShot();
+    return result;
   }
-  return [a, b]
-}
+
+  return [a, b];
+};
+
 
 
 while (isPlayer1Turn) {
@@ -221,6 +283,8 @@ while (isPlayer1Turn) {
   }
   let computerShotCoords = computerSendShot()
   let outcome = gameboard.receiveAttack(computerShotCoords[0], computerShotCoords[1], player1);
+  gameboard.printBoard(player1)
+  console.log("^^^")
     if (outcome === "Direct hit!") {
       console.log("We've taken a hit Admiral!")
     }
@@ -228,6 +292,7 @@ while (isPlayer1Turn) {
       console.log("The enemy have missed us!")
     }
     if (outcome === "The fleet has been destroyed!") {
+      console.log("Our fleet has been destroyed!")
       console.log(`We have been defeated ${player1.name}...`);
       break
     }
