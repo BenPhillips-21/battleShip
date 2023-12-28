@@ -1,13 +1,27 @@
-.clickable-div {
-    background-color: #f8d112;
-    padding: 70px;
-    margin: 2px;
-    cursor: pointer;
-    border: 2px solid black;
-    border-radius: 5px;
+/* Style the container for the boards */
+.boards-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+  }
+  
+  /* Style the board */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(10, 30px); /* Adjust the size of each cell */
+    gap: 2px;
+    margin: 5px;
+  }
+  
+  /* Style the board cells */
+  .cell {
+    width: 30px; /* Adjust the size of each cell */
+    height: 30px;
+    border: 1px solid #000;
+    background-color: #eee;
     text-align: center;
-    color: #FA26A0;
-    font-size: 8rem;
-    font-family: 'Permanent Marker', cursive;
-    position: relative; 
-}
+    line-height: 30px;
+    font-size: 12px;
+    cursor: pointer; /* Add cursor pointer on hover */
+  }
+  

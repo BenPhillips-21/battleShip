@@ -172,8 +172,8 @@ for (var i = 0; i < player1.fleet.length; i++) {
       }
   };
 for (var i = 0; i < player2.fleet.length; i++) {
-  let x = Math.floor(Math.random() * 9) + 1;
-  let y = Math.floor(Math.random() * 9) + 1;
+  let x = Math.floor(Math.random() * 9);
+  let y = Math.floor(Math.random() * 9);
   let direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
   let result = gameboard.receiveShip(x, y, direction, player2.fleet[i], player2)
     if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
@@ -259,8 +259,8 @@ console.log(player1.board)
     }
   }
 
-  let a = Math.floor(Math.random() * 9) + 1;
-  let b = Math.floor(Math.random() * 9) + 1;
+  let a = Math.floor(Math.random() * 9);
+  let b = Math.floor(Math.random() * 9);
   
   if (player1.board[a][b] === "M" || player1.board[a][b] === "H") {
     let result = computerSendShot();
