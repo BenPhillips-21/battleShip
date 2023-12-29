@@ -3,58 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="battleship.css">
+  <link rel="stylesheet" type="text/css" href="battleship.css">
+  <script src="battleship.js" defer></script>
 </head>
 <body>
 
   <div class="boards-container">
     <div>
-      <h2>Player Board</h2>
-      <div class="board" id="playerBoard">
-        <!-- Generate the player board cells using JavaScript -->
-      </div>
+      <h2>Friendly Waters</h2>
+      <div class="board" id="playerBoard"></div>
     </div>
-
+    <h1 class="hidden-heading" id="hiddenHeading"></h1>
     <div>
-      <h2>Computer Board</h2>
-      <div class="board" id="computerBoard">
-        <!-- Generate the computer board cells using JavaScript -->
-      </div>
+      <h2>Enemy Waters</h2>
+      <div class="board" id="computerBoard"></div>
     </div>
   </div>
-
-  <script>
-    // Function to generate the game board cells
-    function generateBoard(boardId) {
-      const board = document.getElementById(boardId);
-
-      for (let i = 0; i < 10; i++) { // Set to 10 columns for a 10x10 board
-        for (let j = 0; j < 10; j++) { // Set to 10 rows for a 10x10 board
-          const cell = document.createElement('div');
-          cell.className = 'cell';
-          cell.id = `${boardId}-${i}-${j}`;
-          cell.textContent = ''; // You can set initial values here if needed
-
-          // Add click event handler
-          cell.onclick = function() {
-            handleCellClick(cell.id);
-          };
-
-          board.appendChild(cell);
-        }
-      }
-    }
-
-    // Example click event handler
-    function handleCellClick(cellId) {
-      console.log(`Cell clicked: ${cellId}`);
-      // Add your logic for handling the click event
-    }
-
-    // Generate player and computer boards
-    generateBoard('playerBoard');
-    generateBoard('computerBoard');
-  </script>
-
 </body>
 </html>

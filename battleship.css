@@ -1,3 +1,5 @@
+/* battleship.css */
+
 /* Style the container for the boards */
 .boards-container {
     display: flex;
@@ -24,4 +26,12 @@
     font-size: 12px;
     cursor: pointer; /* Add cursor pointer on hover */
   }
+
+  .ship {
+    background-color: navy; /* Change to the color you want */
+  }
+
+  .hidden-heading {
+    display: none;
+}
   
