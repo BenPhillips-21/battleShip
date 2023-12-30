@@ -50,6 +50,16 @@ const gameboard = {
       while (i < ship.length) {
         player.board[coordX][coordY] = ship.shipId;
         coordX += 1;
+          if (player.name === "Computer") {
+            const cellId = `computerBoard-${coordX-1}-${coordY}`;
+            console.log(cellId)
+            const cell = document.getElementById(cellId);
+            cell.classList.add('ship');
+          } else {
+            const cellId = `playerBoard-${coordX-1}-${coordY}`;
+            const cell = document.getElementById(cellId);
+            cell.classList.add('ship');
+          }      
         i++;
       }
     } else {
@@ -67,17 +77,17 @@ const gameboard = {
       while (t < ship.length) {
         player.board[coordX][coordY] = ship.shipId;
         coordY += 1;
-        t++;
-        console.log(t)
-        // t is the y coordinate
-        // the coordX coordinate stays the same
-
-        const cellId = `playerBoard-${coordX}-${t}`;
-        console.log(cellId)
-        const cell = document.getElementById(cellId);
-        if (cell) {
+        if (player.name === "Computer") {
+          const cellId = `computerBoard-${coordX}-${coordY-1}`;
+          console.log(cellId)
+          const cell = document.getElementById(cellId);
+          cell.classList.add('ship');
+        } else {
+          const cellId = `playerBoard-${coordX}-${coordY-1}`;
+          const cell = document.getElementById(cellId);
           cell.classList.add('ship');
         }
+        t++;
       }
     }
   },
@@ -186,6 +196,7 @@ function generateBoard(boardId) {
 generateBoard("playerBoard")
 generateBoard("computerBoard")
 
+
 function handleCellClick() {
   return new Promise(resolve => {
     const board = document.getElementById("playerBoard");
@@ -211,12 +222,22 @@ async function placeShips() {
     // Console.log the prompt message
     console.log(`Select where you shall place the ${shipNames[i]} ${player1.name}`);
 
+    const button = document.getElementById("rotateButton")
+    button.onclick = function() {
+      handleButtonClick()
+    }
+
+    function handleButtonClick() {
+      direction = direction === 'horizontal' ? 'vertical' : 'horizontal';
+      console.log('bello')
+    }
+
+    let direction = 'horizontal'
+
     let coords = await handleCellClick();
 
     // Extract x and y from coords
     let [x, y] = coords.split('-').slice(1).map(Number);
-
-    let direction = 'horizontal';
 
     let result = gameboard.receiveShip(x, y, direction, player1.fleet[i], player1);
     gameboard.printBoard(player1);
