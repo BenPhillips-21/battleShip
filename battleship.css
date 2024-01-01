@@ -14,20 +14,6 @@
     gap: 2px;
     margin: 5px;
   }
-
-  .shippy {
-    display: grid;
-    grid-template-columns: repeat(5, 30px); /* Set the number of columns to 5 */
-    gap: 2px;
-    margin: 5px;
-    background-color: navy; /* Adjust the color to your preference */
-    height: 30px; /* Set the height of the ship */
-  }
-  
-  /* Add border to each cell */
-  .shippy > div {
-    border: 1px solid black;
-  }
   
   
   /* Style the board cells */
@@ -35,7 +21,7 @@
     width: 30px; /* Adjust the size of each cell */
     height: 30px;
     border: 1px solid #000;
-    background-color: #eee;
+    background-color: #ededed;
     text-align: center;
     line-height: 30px;
     font-size: 12px;

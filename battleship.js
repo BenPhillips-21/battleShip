@@ -52,7 +52,6 @@ const gameboard = {
         coordX += 1;
           if (player.name === "Computer") {
             const cellId = `computerBoard-${coordX-1}-${coordY}`;
-            console.log(cellId)
             const cell = document.getElementById(cellId);
             cell.classList.add('ship');
           } else {
@@ -79,7 +78,6 @@ const gameboard = {
         coordY += 1;
         if (player.name === "Computer") {
           const cellId = `computerBoard-${coordX}-${coordY-1}`;
-          console.log(cellId)
           const cell = document.getElementById(cellId);
           cell.classList.add('ship');
         } else {
@@ -96,7 +94,6 @@ checkFleet: function(playerFleet) {
   for (var i = 0; i < playerFleet.length; i++) {
     fleetSunkenStatus.push(playerFleet[i].sunken);
   }
-  console.log(fleetSunkenStatus)
 
   if (fleetSunkenStatus.every((ship) => ship === true)) {
     return "The fleet has been destroyed!";
@@ -110,10 +107,8 @@ checkFleet: function(playerFleet) {
         if (player.board[coordX][coordY] === player.fleet[i].shipId) {
           player.fleet[i].hit();
           player.fleet[i].isSunk();
-          console.log(player.fleet[i])
           player.board[coordX][coordY] = "H";
           let result = gameboard.checkFleet(player.fleet);
-          console.log(result);
           if (result === "The fleet has been destroyed!") {
             return result;
           } else {
@@ -156,14 +151,7 @@ const player2 = createPlayer("Computer", leFleet2);
 gameboard.printBoard(player1);
 gameboard.printBoard(player2);
 
-console.log(player1.fleet);
-console.log(player2.fleet);
-
-console.log(player1.name);
-console.log(player2.name);
-
 let x = gameboard.checkFleet(player2.fleet);
-console.log(x);
 
 let shipNames = [
   "carrier",
@@ -181,12 +169,24 @@ function generateBoard(boardId) {
       const cell = document.createElement("div");
       cell.className = "cell";
       cell.id = `${boardId}-${i}-${j}`;
-      cell.textContent = ""; // You can set initial values here if needed
 
       // Add click event handler
       cell.onclick = function () {
         handleCellClick(cell.id);
       };
+
+      cell.addEventListener('mouseover', function() {
+        handleCellEvent(event.target, 'navy', 'horizontal');
+      });
+
+      cell.addEventListener('mouseout', function() {
+        let [x, y] = event.target.id.split('-').slice(1).map(Number);
+        if (player1.board[x][y] > 0) {
+          // do nothing
+        } else {
+          handleCellEvent(event.target, '#ededed', 'horizontal');
+        }
+      });
 
       board.appendChild(cell);
     }
@@ -196,6 +196,23 @@ function generateBoard(boardId) {
 generateBoard("playerBoard")
 generateBoard("computerBoard")
 
+function handleCellEvent(event, backgroundColor, direction) {
+    let cell = event
+    cell.classList.add('ship');
+    cell.style.backgroundColor = backgroundColor;
+
+    let [x, y] = cell.id.split('-').slice(1).map(Number);
+    for (var i = 0; i < player1.fleet[0].length; i++) {
+      const cellId = `playerBoard-${x}-${y}`;
+      const cell = document.getElementById(cellId);
+      cell.style.backgroundColor = backgroundColor;
+      if (direction === 'horizontal') {
+        y++;
+    } else if (direction === 'vertical') {
+        x++;
+    }
+    }
+  }
 
 function handleCellClick() {
   return new Promise(resolve => {
@@ -204,7 +221,6 @@ function handleCellClick() {
     // Create a click event listener
     function clickHandler(event) {
       const cellId = event.target.id;
-      console.log(cellId)
       resolve(cellId);
     }
 
@@ -218,9 +234,6 @@ async function placeShips() {
     var heading = document.getElementById("hiddenHeading");
     heading.style.display = "block";
     heading.textContent = `Select where you shall place the ${shipNames[i]} ${player1.name}`;
-    
-    // Console.log the prompt message
-    console.log(`Select where you shall place the ${shipNames[i]} ${player1.name}`);
 
     const button = document.getElementById("rotateButton")
     button.onclick = function() {
@@ -229,8 +242,7 @@ async function placeShips() {
 
     function handleButtonClick() {
       direction = direction === 'horizontal' ? 'vertical' : 'horizontal';
-      console.log('bello')
-    }
+      };
 
     let direction = 'horizontal'
 
@@ -242,10 +254,11 @@ async function placeShips() {
     let result = gameboard.receiveShip(x, y, direction, player1.fleet[i], player1);
     gameboard.printBoard(player1);
     if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
-      console.log(result);
       i--;
     }
-  }
+}
+
+  
 
   for (var i = 0; i < player2.fleet.length; i++) {
     let x = Math.floor(Math.random() * 9);
@@ -262,13 +275,7 @@ async function gameLoop() {
   await placeShips();
   gameboard.printBoard(player2);
 }
-
-console.log("Le loop");
 gameLoop();
-
-
-
-console.log(`${player1.name}, it is time to attack!`);
 
 let isPlayer1Turn = true;
 
@@ -281,7 +288,7 @@ const sendShot = () => {
   let y = parseInt(readline.question(`And at which Y coordinate Admiral? \n`));
 
   if (isNaN(x) || isNaN(y)) {
-    console.log("Please enter valid coordinates!");
+    console.log("Please enter valid coordinates")
     return sendShot();
   }
 
@@ -377,7 +384,6 @@ function initializeGame() {
     player1
   );
   gameboard.printBoard(player1);
-  console.log("^^^");
   if (outcome === "Direct hit!") {
     console.log("We've taken a hit Admiral!");
   }
