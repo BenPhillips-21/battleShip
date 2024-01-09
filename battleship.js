@@ -161,6 +161,9 @@ let shipNames = [
   "patrolboat",
 ];
 
+let direction = 'horizontal'
+let currentShipLength = player1.fleet[0].length
+
 function generateBoard(boardId) {
   const board = document.getElementById(boardId);
 
@@ -176,15 +179,16 @@ function generateBoard(boardId) {
       };
 
       cell.addEventListener('mouseover', function() {
-        handleCellEvent(event.target, 'navy', 'horizontal');
+        handleCellEvent(event.target, 'navy', direction, currentShipLength);
       });
 
       cell.addEventListener('mouseout', function() {
+        // if there's a ship on the spot ... dont change colour
         let [x, y] = event.target.id.split('-').slice(1).map(Number);
         if (player1.board[x][y] > 0) {
           // do nothing
         } else {
-          handleCellEvent(event.target, '#ededed', 'horizontal');
+          handleCellEvent(event.target, '#ededed', direction, currentShipLength);
         }
       });
 
@@ -196,13 +200,15 @@ function generateBoard(boardId) {
 generateBoard("playerBoard")
 generateBoard("computerBoard")
 
-function handleCellEvent(event, backgroundColor, direction) {
+function handleCellEvent(event, backgroundColor, direction, shipLength) {
     let cell = event
     cell.classList.add('ship');
     cell.style.backgroundColor = backgroundColor;
 
     let [x, y] = cell.id.split('-').slice(1).map(Number);
-    for (var i = 0; i < player1.fleet[0].length; i++) {
+
+    for (var i = 0; i < shipLength; i++) {
+      console.log(shipLength)
       const cellId = `playerBoard-${x}-${y}`;
       const cell = document.getElementById(cellId);
       cell.style.backgroundColor = backgroundColor;
@@ -218,19 +224,18 @@ function handleCellClick() {
   return new Promise(resolve => {
     const board = document.getElementById("playerBoard");
 
-    // Create a click event listener
     function clickHandler(event) {
       const cellId = event.target.id;
       resolve(cellId);
     }
 
-    // Add the click event listener to the board
     board.addEventListener("click", clickHandler);
   });
 }
 
 async function placeShips() {
   for (var i = 0; i < player1.fleet.length; i++) {
+    currentShipLength = player1.fleet[i].length;
     var heading = document.getElementById("hiddenHeading");
     heading.style.display = "block";
     heading.textContent = `Select where you shall place the ${shipNames[i]} ${player1.name}`;
@@ -244,8 +249,6 @@ async function placeShips() {
       direction = direction === 'horizontal' ? 'vertical' : 'horizontal';
       };
 
-    let direction = 'horizontal'
-
     let coords = await handleCellClick();
 
     // Extract x and y from coords
@@ -256,6 +259,7 @@ async function placeShips() {
     if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
       i--;
     }
+    
 }
 
   
