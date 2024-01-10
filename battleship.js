@@ -179,17 +179,30 @@ function generateBoard(boardId) {
       };
 
       cell.addEventListener('mouseover', function() {
-        handleCellEvent(event.target, 'navy', direction, currentShipLength);
+        if (boardId === 'playerBoard') {
+        handleCellEvent(event.target, 'navy', direction, currentShipLength, boardId);
+        } else {
+          let cell = event.target
+          cell.style.backgroundColor = 'purple';
+        }
       });
 
       cell.addEventListener('mouseout', function() {
-        // if there's a ship on the spot ... dont change colour
         let [x, y] = event.target.id.split('-').slice(1).map(Number);
-        if (player1.board[x][y] > 0) {
-          // do nothing
+        // needs to distinguish between the two boards 
+        if (boardId === 'playerBoard') {
+          if (player1.board[x][y] > 0) {
+            handleCellEvent(event.target, 'navy', direction, 1, boardId);
+          } else {
+            handleCellEvent(event.target, '#ededed', direction, currentShipLength, boardId);
+          } 
         } else {
-          handleCellEvent(event.target, '#ededed', direction, currentShipLength);
-        }
+          if (player2.board[x][y] > 0) {
+            handleCellEvent(event.target, 'navy', direction, 1, boardId);
+          } else {
+            handleCellEvent(event.target, '#ededed', direction, currentShipLength, boardId);
+          } 
+        } 
       });
 
       board.appendChild(cell);
@@ -200,7 +213,7 @@ function generateBoard(boardId) {
 generateBoard("playerBoard")
 generateBoard("computerBoard")
 
-function handleCellEvent(event, backgroundColor, direction, shipLength) {
+function handleCellEvent(event, backgroundColor, direction, shipLength, board) {
     let cell = event
     cell.classList.add('ship');
     cell.style.backgroundColor = backgroundColor;
@@ -208,7 +221,7 @@ function handleCellEvent(event, backgroundColor, direction, shipLength) {
     let [x, y] = cell.id.split('-').slice(1).map(Number);
 
     for (var i = 0; i < shipLength; i++) {
-      console.log(shipLength)
+      if (board === 'playerBoard') {
       const cellId = `playerBoard-${x}-${y}`;
       const cell = document.getElementById(cellId);
       cell.style.backgroundColor = backgroundColor;
@@ -218,6 +231,7 @@ function handleCellEvent(event, backgroundColor, direction, shipLength) {
         x++;
     }
     }
+  }
   }
 
 function handleCellClick() {
@@ -257,9 +271,9 @@ async function placeShips() {
     let result = gameboard.receiveShip(x, y, direction, player1.fleet[i], player1);
     gameboard.printBoard(player1);
     if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
+      alert(`${result}`)
       i--;
     }
-    
 }
 
   
@@ -277,6 +291,8 @@ async function placeShips() {
 
 async function gameLoop() {
   await placeShips();
+  var heading = document.getElementById("hiddenHeading");
+  heading.textContent = "Prepare for Battle!";
   gameboard.printBoard(player2);
 }
 gameLoop();
