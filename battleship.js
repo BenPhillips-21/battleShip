@@ -161,6 +161,7 @@ let shipNames = [
   "patrolboat",
 ];
 
+let shipsPlaced = false
 let direction = 'horizontal'
 let currentShipLength = player1.fleet[0].length
 
@@ -179,11 +180,17 @@ function generateBoard(boardId) {
       };
 
       cell.addEventListener('mouseover', function() {
-        if (boardId === 'playerBoard') {
+        if (shipsPlaced === false) {
+          console.log(shipsPlaced)
         handleCellEvent(event.target, 'navy', direction, currentShipLength, boardId);
         } else {
+          if (boardId === 'computerBoard') {
+            console.log(shipsPlaced)
+          console.log('bello')
           let cell = event.target
+          console.log(cell)
           cell.style.backgroundColor = 'purple';
+          }
         }
       });
 
@@ -198,9 +205,19 @@ function generateBoard(boardId) {
           } 
         } else {
           if (player2.board[x][y] > 0) {
-            handleCellEvent(event.target, 'navy', direction, 1, boardId);
-          } else {
-            handleCellEvent(event.target, '#ededed', direction, currentShipLength, boardId);
+              console.log(player2.board[x][y], 'A')
+              let cell = event.target
+              console.log(cell)
+              cell.style.backgroundColor = 'navy';
+          } else if (player1.board[x][y] > 0) {
+              let cell = event.target
+              console.log(cell)
+              cell.style.backgroundColor = '#ededed';
+          }
+          else {
+              let cell = event.target
+              console.log(cell)
+              cell.style.backgroundColor = '#ededed';
           } 
         } 
       });
@@ -214,21 +231,47 @@ generateBoard("playerBoard")
 generateBoard("computerBoard")
 
 function handleCellEvent(event, backgroundColor, direction, shipLength, board) {
+console.log(board)
+    let [x, y] = event.id.split('-').slice(1).map(Number);
+    if (player1.board[x][y] > 0) {
+      console.log("GYATT")
+      return
+    }
+    if (direction === 'vertical') {
+      for (let j = 0; j < shipLength-1; j++) {
+        x++
+        if (player1.board[x][y] > 0) {
+        console.log(player1.board[x][y], 'VERTICAL RETURNING :)')
+        return       
+        }
+      }
+    }
+    if (direction === 'horizontal') {
+      for (let t = 0; t < shipLength-1; t++) {
+        y++
+        if (player1.board[x][y] > 0 || player1.board[x][y] === undefined) {
+        console.log(player1.board[x][y], 'HORIZONTAL RETURNING :)')
+        return       
+        }
+        console.log(player1.board[x][y], "<<<<")
+    }
+  }
     let cell = event
     cell.classList.add('ship');
     cell.style.backgroundColor = backgroundColor;
-
-    let [x, y] = cell.id.split('-').slice(1).map(Number);
-
+    let [a, b] = event.id.split('-').slice(1).map(Number);
     for (var i = 0; i < shipLength; i++) {
       if (board === 'playerBoard') {
-      const cellId = `playerBoard-${x}-${y}`;
-      const cell = document.getElementById(cellId);
-      cell.style.backgroundColor = backgroundColor;
+      const currentCellId = `playerBoard-${a}-${b}`;
+      const currentCell = document.getElementById(currentCellId);
+        // if (currentCell === null) {
+        //   return
+        // }
+      currentCell.style.backgroundColor = backgroundColor;
       if (direction === 'horizontal') {
-        y++;
+        b++;
     } else if (direction === 'vertical') {
-        x++;
+        a++;
     }
     }
   }
@@ -276,8 +319,6 @@ async function placeShips() {
     }
 }
 
-  
-
   for (var i = 0; i < player2.fleet.length; i++) {
     let x = Math.floor(Math.random() * 9);
     let y = Math.floor(Math.random() * 9);
@@ -291,6 +332,7 @@ async function placeShips() {
 
 async function gameLoop() {
   await placeShips();
+  shipsPlaced = true
   var heading = document.getElementById("hiddenHeading");
   heading.textContent = "Prepare for Battle!";
   gameboard.printBoard(player2);
