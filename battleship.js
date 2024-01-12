@@ -181,15 +181,11 @@ function generateBoard(boardId) {
 
       cell.addEventListener('mouseover', function() {
         if (shipsPlaced === false) {
-          console.log(shipsPlaced)
         handleCellEvent(event.target, 'navy', direction, currentShipLength, boardId);
         } else {
           if (boardId === 'computerBoard') {
-            console.log(shipsPlaced)
-          console.log('bello')
           let cell = event.target
-          console.log(cell)
-          cell.style.backgroundColor = 'purple';
+          cell.style.backgroundColor = 'yellow';
           }
         }
       });
@@ -205,18 +201,14 @@ function generateBoard(boardId) {
           } 
         } else {
           if (player2.board[x][y] > 0) {
-              console.log(player2.board[x][y], 'A')
               let cell = event.target
-              console.log(cell)
               cell.style.backgroundColor = 'navy';
           } else if (player1.board[x][y] > 0) {
               let cell = event.target
-              console.log(cell)
               cell.style.backgroundColor = '#ededed';
           }
           else {
               let cell = event.target
-              console.log(cell)
               cell.style.backgroundColor = '#ededed';
           } 
         } 
@@ -231,17 +223,14 @@ generateBoard("playerBoard")
 generateBoard("computerBoard")
 
 function handleCellEvent(event, backgroundColor, direction, shipLength, board) {
-console.log(board)
     let [x, y] = event.id.split('-').slice(1).map(Number);
     if (player1.board[x][y] > 0) {
-      console.log("GYATT")
       return
     }
     if (direction === 'vertical') {
       for (let j = 0; j < shipLength-1; j++) {
         x++
         if (player1.board[x][y] > 0) {
-        console.log(player1.board[x][y], 'VERTICAL RETURNING :)')
         return       
         }
       }
@@ -250,10 +239,8 @@ console.log(board)
       for (let t = 0; t < shipLength-1; t++) {
         y++
         if (player1.board[x][y] > 0 || player1.board[x][y] === undefined) {
-        console.log(player1.board[x][y], 'HORIZONTAL RETURNING :)')
         return       
         }
-        console.log(player1.board[x][y], "<<<<")
     }
   }
     let cell = event
@@ -277,9 +264,9 @@ console.log(board)
   }
   }
 
-function handleCellClick() {
+function handleCellClick(boardId) {
   return new Promise(resolve => {
-    const board = document.getElementById("playerBoard");
+    const board = document.getElementById(boardId);
 
     function clickHandler(event) {
       const cellId = event.target.id;
@@ -306,7 +293,7 @@ async function placeShips() {
       direction = direction === 'horizontal' ? 'vertical' : 'horizontal';
       };
 
-    let coords = await handleCellClick();
+    let coords = await handleCellClick("playerBoard");
 
     // Extract x and y from coords
     let [x, y] = coords.split('-').slice(1).map(Number);
@@ -330,36 +317,64 @@ async function placeShips() {
   }
 }
 
+let isPlayer1Turn = true;
+
 async function gameLoop() {
   await placeShips();
   shipsPlaced = true
   var heading = document.getElementById("hiddenHeading");
   heading.textContent = "Prepare for Battle!";
   gameboard.printBoard(player2);
+  console.log('skibidi')
+    while (isPlayer1Turn === true) {
+      let validatedCoords = await sendShot()
+      let result = gameboard.receiveAttack(validatedCoords[0], validatedCoords[1], player2);
+      if (result === "The fleet has been destroyed!") {
+          console.log(
+            `The enemy fleet has been destroyed ${player1.name}! Victory is ours!`
+          );
+          return;
+        }
+        let computerShotCoords = computerSendShot();
+        let outcome = gameboard.receiveAttack(
+          computerShotCoords[0],
+          computerShotCoords[1],
+          player1
+        );
+        gameboard.printBoard(player1);
+        if (outcome === "Direct hit!") {
+          console.log("We've taken a hit Admiral!");
+        }
+        if (outcome === "Miss!") {
+          console.log("The enemy have missed us!");
+        }
+        if (outcome === "The fleet has been destroyed!") {
+          console.log("Our fleet has been destroyed!");
+          console.log(`We have been defeated ${player1.name}...`);
+          return;
+        }
+    }
+  heading.textContent = "Game Over!"
 }
 gameLoop();
 
-let isPlayer1Turn = true;
+async function sendShot() {
+  let rawCoords = await handleCellClick("computerBoard");
 
-const sendShot = () => {
-  let x = parseInt(
-    readline.question(
-      `At which X coordinate shall we send our shot ${player1.name}? \n`
-    )
-  );
-  let y = parseInt(readline.question(`And at which Y coordinate Admiral? \n`));
+  let [x, y] = rawCoords.split('-').slice(1).map(Number);
+  gameboard.printBoard(player2);
 
   if (isNaN(x) || isNaN(y)) {
     console.log("Please enter valid coordinates")
     return sendShot();
   }
 
-  if (x < 0 || x > 9 || y < 0 || y > 9) {
+  else if (x < 0 || x > 9 || y < 0 || y > 9) {
     console.log("Please enter coordinates within the valid range (0-9)!");
     return sendShot();
   }
 
-  if (player2.board[x][y] === "M" || player2.board[x][y] === "H") {
+  else if (player2.board[x][y] === "M" || player2.board[x][y] === "H") {
     console.log("You've already fired a shot there Admiral! Let's try again...");
     return sendShot();
   }
