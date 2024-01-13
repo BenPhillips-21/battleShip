@@ -108,6 +108,10 @@ checkFleet: function(playerFleet) {
           player.fleet[i].hit();
           player.fleet[i].isSunk();
           player.board[coordX][coordY] = "H";
+          let lePlayer = player.name.toLowerCase();
+          const cellId = `${lePlayer}Board-${coordX}-${coordY}`;
+          const cell = document.getElementById(cellId);
+          cell.style.backgroundColor = 'red';
           let result = gameboard.checkFleet(player.fleet);
           if (result === "The fleet has been destroyed!") {
             return result;
@@ -118,6 +122,13 @@ checkFleet: function(playerFleet) {
       }
     } else {
       player.board[coordX][coordY] = "M";
+      // check which board it is
+      let lePlayer = player.name.toLowerCase();
+      const cellId = `${lePlayer}Board-${coordX}-${coordY}`;
+      console.log(cellId);
+      const cell = document.getElementById(cellId);
+      console.log(cell)
+      cell.style.backgroundColor = 'green';
       return "Miss!";
     }
   },
@@ -145,7 +156,7 @@ const patrolboat2 = ship(2, 0, false, 1);
 const leFleet1 = [carrier1, battleship1, destroyer1, submarine1, patrolboat1];
 const leFleet2 = [carrier2, battleship2, destroyer2, submarine2, patrolboat2];
 
-const player1 = createPlayer("Admiral Nelson", leFleet1);
+const player1 = createPlayer("player", leFleet1);
 const player2 = createPlayer("Computer", leFleet2);
 
 gameboard.printBoard(player1);
@@ -336,6 +347,7 @@ async function gameLoop() {
           return;
         }
         let computerShotCoords = computerSendShot();
+        console.log(computerShotCoords)
         let outcome = gameboard.receiveAttack(
           computerShotCoords[0],
           computerShotCoords[1],
@@ -442,39 +454,5 @@ const computerSendShot = () => {
 
   return [a, b];
 };
-
-function initializeGame() {
-  gameboard.printBoard(player2);
-  let shotCoords = sendShot();
-  let result = gameboard.receiveAttack(shotCoords[0], shotCoords[1], player2);
-  console.log(result);
-  if (result === "The fleet has been destroyed!") {
-    console.log(
-      `The enemy fleet has been destroyed ${player1.name}! Victory is ours!`
-    );
-    return;
-  }
-  let computerShotCoords = computerSendShot();
-  let outcome = gameboard.receiveAttack(
-    computerShotCoords[0],
-    computerShotCoords[1],
-    player1
-  );
-  gameboard.printBoard(player1);
-  if (outcome === "Direct hit!") {
-    console.log("We've taken a hit Admiral!");
-  }
-  if (outcome === "Miss!") {
-    console.log("The enemy have missed us!");
-  }
-  if (outcome === "The fleet has been destroyed!") {
-    console.log("Our fleet has been destroyed!");
-    console.log(`We have been defeated ${player1.name}...`);
-    return;
-  }
-}
-
-initializeGame();
-console.log("Game over");
 
 // module.exports = { ship, gameboard, ships };
