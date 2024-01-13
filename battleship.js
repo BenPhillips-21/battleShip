@@ -193,37 +193,60 @@ function generateBoard(boardId) {
       cell.addEventListener('mouseover', function() {
         if (shipsPlaced === false) {
         handleCellEvent(event.target, 'navy', direction, currentShipLength, boardId);
-        } else {
+        } 
+        else if (boardId === 'playerBoard') {
+        }
+        else {
           if (boardId === 'computerBoard') {
           let cell = event.target
+          if (cell.style.backgroundColor === 'green' || cell.style.backgroundColor === 'red') {
+          } else {          
           cell.style.backgroundColor = 'yellow';
           }
+          } 
         }
       });
 
-      cell.addEventListener('mouseout', function() {
-        let [x, y] = event.target.id.split('-').slice(1).map(Number);
-        // needs to distinguish between the two boards 
-        if (boardId === 'playerBoard') {
-          if (player1.board[x][y] > 0) {
+cell.addEventListener('mouseout', function() {
+    let [x, y] = event.target.id.split('-').slice(1).map(Number);
+    
+    if (boardId === 'playerBoard') {
+        if (shipsPlaced === true) {
+
+        }
+        else if (player1.board[x][y] > 0) {
             handleCellEvent(event.target, 'navy', direction, 1, boardId);
-          } else {
-            handleCellEvent(event.target, '#ededed', direction, currentShipLength, boardId);
-          } 
         } else {
-          if (player2.board[x][y] > 0) {
-              let cell = event.target
-              cell.style.backgroundColor = 'navy';
-          } else if (player1.board[x][y] > 0) {
-              let cell = event.target
-              cell.style.backgroundColor = '#ededed';
-          }
-          else {
-              let cell = event.target
-              cell.style.backgroundColor = '#ededed';
-          } 
-        } 
-      });
+            handleCellEvent(event.target, '#ededed', direction, currentShipLength, boardId);
+        }
+    } else {
+        if (player2.board[x][y] > 0) {
+            let cell = event.target;
+            cell.style.backgroundColor = 'navy';
+        } else if (player1.board[x][y] > 0) {
+            let cell = event.target;
+            if (cell.style.backgroundColor === 'green' || cell.style.backgroundColor === 'red') {
+                // Do nothing if the color is green or red
+            } else {
+                cell.style.backgroundColor = '#ededed';
+            }
+        } else {
+            let cell = event.target;
+            switch (cell.style.backgroundColor) {
+                case 'red':
+                    cell.style.backgroundColor = 'red';
+                    break;
+                case 'green':
+                    cell.style.backgroundColor = 'green';
+                    break;
+                default:
+                    cell.style.backgroundColor = '#ededed';
+                    break;
+            }
+        }
+    }
+});
+
 
       board.appendChild(cell);
     }
@@ -293,7 +316,7 @@ async function placeShips() {
     currentShipLength = player1.fleet[i].length;
     var heading = document.getElementById("hiddenHeading");
     heading.style.display = "block";
-    heading.textContent = `Select where you shall place the ${shipNames[i]} ${player1.name}`;
+    heading.textContent = `Admiral, select where you shall place your ${shipNames[i]}.`;
 
     const button = document.getElementById("rotateButton")
     button.onclick = function() {
@@ -332,18 +355,20 @@ let isPlayer1Turn = true;
 
 async function gameLoop() {
   await placeShips();
+  var rotate = document.getElementById("rotateButton");
+  rotate.style.display = "none";
   shipsPlaced = true
   var heading = document.getElementById("hiddenHeading");
-  heading.textContent = "Prepare for Battle!";
+  heading.textContent = "Fire your first shot into enemy waters!";
   gameboard.printBoard(player2);
-  console.log('skibidi')
     while (isPlayer1Turn === true) {
       let validatedCoords = await sendShot()
+        heading.textContent = "";
       let result = gameboard.receiveAttack(validatedCoords[0], validatedCoords[1], player2);
       if (result === "The fleet has been destroyed!") {
-          console.log(
-            `The enemy fleet has been destroyed ${player1.name}! Victory is ours!`
-          );
+          heading.textContent = "The enemy fleet has been destroyed! Victory is ours!"
+          var play = document.getElementById("playButton");
+          play.style.display = "block";
           return;
         }
         let computerShotCoords = computerSendShot();
@@ -354,21 +379,22 @@ async function gameLoop() {
           player1
         );
         gameboard.printBoard(player1);
-        if (outcome === "Direct hit!") {
-          console.log("We've taken a hit Admiral!");
-        }
-        if (outcome === "Miss!") {
-          console.log("The enemy have missed us!");
-        }
         if (outcome === "The fleet has been destroyed!") {
-          console.log("Our fleet has been destroyed!");
+          heading.textContent = "Our fleet has been destroyed! We have been defeated Admiral..."
           console.log(`We have been defeated ${player1.name}...`);
+          var play = document.getElementById("playButton");
+          play.style.display = "block";
           return;
         }
     }
   heading.textContent = "Game Over!"
 }
 gameLoop();
+
+document.getElementById('playButton').addEventListener('click', function() {
+    location.reload();
+});
+
 
 async function sendShot() {
   let rawCoords = await handleCellClick("computerBoard");
@@ -439,13 +465,12 @@ const computerSendShot = () => {
         if (r4 === "Legal") {
           return [i, d];
         }
-        // if all moves are illegal, then do a random shot LOL
       }
     }
   }
 
-  let a = Math.floor(Math.random() * 9);
-  let b = Math.floor(Math.random() * 9);
+  let a = Math.floor(Math.random() * 10);
+  let b = Math.floor(Math.random() * 10);
 
   if (player1.board[a][b] === "M" || player1.board[a][b] === "H") {
     let result = computerSendShot();

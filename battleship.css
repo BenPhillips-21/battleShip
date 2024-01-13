@@ -35,4 +35,12 @@
   .hidden-heading {
     display: none;
 }
+
+  .rotate-button {
+    display: block;
+  }
+
+  .play-again {
+    display: none;
+  }
   
