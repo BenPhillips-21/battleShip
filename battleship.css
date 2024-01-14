@@ -1,29 +1,45 @@
-/* battleship.css */
+@font-face {
+  font-family: 'NorfolkBold-mLV0P';
+  src: url('./fonts/NorfolkBold-mLV0P.ttf') format('truetype'); /* Use 'truetype' instead of 'ttf' */
+}
 
-/* Style the container for the boards */
+.NorfolkBold-mLV0P {
+  font-family: 'NorfolkBold-mLV0P'; /* Enclose the font name in single quotes */
+}
+
+@font-face {
+  font-family: 'NorfolkPKoWr';
+  src: url('./fonts/Norfolk-PKoWr.ttf') format('truetype'); /* Use 'truetype' instead of 'ttf' */
+}
+
+.NorfolkPKoWr {
+  font-family: 'NorfolkPKoWr'; /* Enclose the font name in single quotes */
+}
+
+
 .boards-container {
     display: flex;
     justify-content: space-between;
-    margin: 10px;
+    margin-left: 200px;
+    margin-right: 200px;
   }
   
   /* Style the board */
   .board {
     display: grid;
-    grid-template-columns: repeat(10, 30px); /* Adjust the size of each cell */
+    grid-template-columns: repeat(10, 26.5px); /* Adjust the size of each cell */
     gap: 2px;
     margin: 5px;
   }
   
-  
   /* Style the board cells */
   .cell {
-    width: 30px; /* Adjust the size of each cell */
-    height: 30px;
-    border: 1px solid #000;
+    width: 25px; /* Adjust the size of each cell */
+    height: 25px;
+    border: 1.65px solid #000;
     background-color: #ededed;
     text-align: center;
-    line-height: 30px;
+    line-height: 25px;
     font-size: 12px;
     cursor: pointer; /* Add cursor pointer on hover */
   }
@@ -32,15 +48,88 @@
     background-color: navy; /* Change to the color you want */
   }
 
-  .hidden-heading {
-    display: none;
+  .center-container {
+    display: flex;
+    flex-direction: column; /* Adjust the direction to column */
+    align-items: center;
+    justify-content: flex-start; /* Align content to the start (top) */
+    height: 20vh;
 }
 
-  .rotate-button {
-    display: block;
-  }
+h1 {
+    font-family: NorfolkBold-mLV0P;
+    margin-top: 5px;
+    margin-bottom: 0;
+    text-decoration: underline;
+}
 
-  .play-again {
+h2 {
+  font-family: NorfolkPKoWr;
+  margin-bottom: 0px;
+  margin-left: 6px;
+}
+
+body {
+  margin: 0; 
+  padding: 0; 
+  background-image: url('ocean.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+}
+
+
+.hidden-heading {
+    font-family: NorfolkPKoWr;
     display: none;
-  }
+} 
+
+.rotate-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rotate-button {
+  display: block;
+  font-family: 'NorfolkPKoWr';
+  align-items: center;
+  background-color: #0C2D48;
+  border: 0;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #ffffff;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.rotate-button:hover {
+  background-color: #145DA0;
+}
+
+/* Add this to your existing CSS */
+.play-again {
+  display: none;
+  font-family: 'NorfolkPKoWr';
+  font-size: 1.5rem;
+  align-items: center;
+  background-color: #0C2D48;
+  border: 0;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #ffffff;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.play-again:hover {
+  background-color: #145DA0; /* Darker green on hover */
+}
+
   

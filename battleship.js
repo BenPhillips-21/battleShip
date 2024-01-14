@@ -52,8 +52,8 @@ const gameboard = {
         coordX += 1;
           if (player.name === "Computer") {
             const cellId = `computerBoard-${coordX-1}-${coordY}`;
-            const cell = document.getElementById(cellId);
-            cell.classList.add('ship');
+            // const cell = document.getElementById(cellId);
+            // cell.classList.add('ship');
           } else {
             const cellId = `playerBoard-${coordX-1}-${coordY}`;
             const cell = document.getElementById(cellId);
@@ -78,8 +78,8 @@ const gameboard = {
         coordY += 1;
         if (player.name === "Computer") {
           const cellId = `computerBoard-${coordX}-${coordY-1}`;
-          const cell = document.getElementById(cellId);
-          cell.classList.add('ship');
+          // const cell = document.getElementById(cellId);
+          // cell.classList.add('ship');
         } else {
           const cellId = `playerBoard-${coordX}-${coordY-1}`;
           const cell = document.getElementById(cellId);
@@ -192,7 +192,7 @@ function generateBoard(boardId) {
 
       cell.addEventListener('mouseover', function() {
         if (shipsPlaced === false) {
-        handleCellEvent(event.target, 'navy', direction, currentShipLength, boardId);
+        handleCellEvent(event.target, '#0C2D48', direction, currentShipLength, boardId);
         } 
         else if (boardId === 'playerBoard') {
         }
@@ -215,15 +215,12 @@ cell.addEventListener('mouseout', function() {
 
         }
         else if (player1.board[x][y] > 0) {
-            handleCellEvent(event.target, 'navy', direction, 1, boardId);
+            handleCellEvent(event.target, '#0C2D48', direction, 1, boardId);
         } else {
             handleCellEvent(event.target, '#ededed', direction, currentShipLength, boardId);
         }
     } else {
-        if (player2.board[x][y] > 0) {
-            let cell = event.target;
-            cell.style.backgroundColor = 'navy';
-        } else if (player1.board[x][y] > 0) {
+         if (player1.board[x][y] > 0) {
             let cell = event.target;
             if (cell.style.backgroundColor === 'green' || cell.style.backgroundColor === 'red') {
                 // Do nothing if the color is green or red
@@ -341,8 +338,8 @@ async function placeShips() {
 }
 
   for (var i = 0; i < player2.fleet.length; i++) {
-    let x = Math.floor(Math.random() * 9);
-    let y = Math.floor(Math.random() * 9);
+    let x = Math.floor(Math.random() * 10);
+    let y = Math.floor(Math.random() * 10);
     let direction = Math.random() < 0.5 ? "horizontal" : "vertical";
     let result = gameboard.receiveShip(x, y, direction, player2.fleet[i], player2);
     if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
@@ -359,7 +356,7 @@ async function gameLoop() {
   rotate.style.display = "none";
   shipsPlaced = true
   var heading = document.getElementById("hiddenHeading");
-  heading.textContent = "Fire your first shot into enemy waters!";
+  heading.textContent = "Fire at will!";
   gameboard.printBoard(player2);
     while (isPlayer1Turn === true) {
       let validatedCoords = await sendShot()
@@ -380,7 +377,7 @@ async function gameLoop() {
         );
         gameboard.printBoard(player1);
         if (outcome === "The fleet has been destroyed!") {
-          heading.textContent = "Our fleet has been destroyed! We have been defeated Admiral..."
+          heading.textContent = "We have been defeated Admiral..."
           console.log(`We have been defeated ${player1.name}...`);
           var play = document.getElementById("playButton");
           play.style.display = "block";

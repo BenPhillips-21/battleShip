@@ -2,22 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" href="battleship.png" />
+  <title>Battleship</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="battleship.css">
   <script src="battleship.js" defer></script>
 </head>
 <body>
-
+  <div class="center-container">
+  <h1>Battleship</h1>
+  <h3 class="hidden-heading" id="hiddenHeading"></h1>
+  <button class = "play-again" id="playButton">Play Again?</button>
+  </div>
   <div class="boards-container">
     <div>
       <h2>Friendly Waters</h2>
       <div class="board" id="playerBoard"></div>
+      <div class="rotate-button-container">
+        <button class="rotate-button" id="rotateButton">Rotate Ship</button>
+    </div>    
     </div>
-    <h1 class="hidden-heading" id="hiddenHeading"></h1>
-    <h3 class="hidden-heading" id="hiddenHeading2"></h3>
-    <div class="shippy"></div>
-    <button class="rotate-button" id="rotateButton">Rotate</button>
-    <button class = "play-again" id="playButton">Play Again?</button>
     <div>
       <h2>Enemy Waters</h2>
       <div class="board" id="computerBoard"></div>
