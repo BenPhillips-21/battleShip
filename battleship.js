@@ -1,13 +1,16 @@
+// Factory function to create ship objects
 const ship = (length, hitsTaken, sunken, shipId) => ({
-  length,
-  hitsTaken,
-  sunken,
-  shipId,
+  length,          // Length of the ship
+  hitsTaken,       // Number of hits taken by the ship
+  sunken,          // Flag indicating if the ship is sunken
+  shipId,          // Unique identifier for the ship
   hit: function () {
+    // Method to record a hit on the ship and return the updated hitsTaken count
     this.hitsTaken += 1;
     return this.hitsTaken;
   },
   isSunk: function () {
+    // Method to check if the ship is sunken based on hitsTaken and length
     if (this.hitsTaken === this.length) {
       this.sunken = true;
       return this.sunken;
@@ -52,8 +55,6 @@ const gameboard = {
         coordX += 1;
           if (player.name === "Computer") {
             const cellId = `computerBoard-${coordX-1}-${coordY}`;
-            // const cell = document.getElementById(cellId);
-            // cell.classList.add('ship');
           } else {
             const cellId = `playerBoard-${coordX-1}-${coordY}`;
             const cell = document.getElementById(cellId);
@@ -78,8 +79,6 @@ const gameboard = {
         coordY += 1;
         if (player.name === "Computer") {
           const cellId = `computerBoard-${coordX}-${coordY-1}`;
-          // const cell = document.getElementById(cellId);
-          // cell.classList.add('ship');
         } else {
           const cellId = `playerBoard-${coordX}-${coordY-1}`;
           const cell = document.getElementById(cellId);
@@ -101,37 +100,52 @@ checkFleet: function(playerFleet) {
     return "The fleet is still in tact!";
   }
 },
-  receiveAttack: function (coordX, coordY, player) {
-    if (player.board[coordX][coordY] > 0) {
-      for (var i = 0; i < player.fleet.length; i++) {
-        if (player.board[coordX][coordY] === player.fleet[i].shipId) {
-          player.fleet[i].hit();
-          player.fleet[i].isSunk();
-          player.board[coordX][coordY] = "H";
-          let lePlayer = player.name.toLowerCase();
-          const cellId = `${lePlayer}Board-${coordX}-${coordY}`;
-          const cell = document.getElementById(cellId);
-          cell.style.backgroundColor = 'red';
-          let result = gameboard.checkFleet(player.fleet);
-          if (result === "The fleet has been destroyed!") {
-            return result;
-          } else {
-            return "Direct hit!";
-          }
+// Method to handle receiving an attack on the player's gameboard
+receiveAttack: function (coordX, coordY, player) {
+  // Check if the selected cell contains a ship (value greater than 0)
+  if (player.board[coordX][coordY] > 0) {
+    // Loop through the player's fleet to find the corresponding ship
+    for (var i = 0; i < player.fleet.length; i++) {
+      // If the shipId matches the value on the board, it's the hit ship
+      if (player.board[coordX][coordY] === player.fleet[i].shipId) {
+        // Register the hit on the ship and check if it's sunk
+        player.fleet[i].hit();
+        player.fleet[i].isSunk();
+        
+        // Mark the cell as a hit on the player's gameboard
+        player.board[coordX][coordY] = "H";
+
+        // Update the corresponding cell in the DOM with visual feedback
+        let lePlayer = player.name.toLowerCase();
+        const cellId = `${lePlayer}Board-${coordX}-${coordY}`;
+        const cell = document.getElementById(cellId);
+        cell.style.backgroundColor = 'red';
+        cell.textContent = 'X';
+
+        // Check if the entire fleet is destroyed or return a direct hit message
+        let result = gameboard.checkFleet(player.fleet);
+        if (result === "The fleet has been destroyed!") {
+          return result;
+        } else {
+          return "Direct hit!";
         }
       }
-    } else {
-      player.board[coordX][coordY] = "M";
-      // check which board it is
-      let lePlayer = player.name.toLowerCase();
-      const cellId = `${lePlayer}Board-${coordX}-${coordY}`;
-      console.log(cellId);
-      const cell = document.getElementById(cellId);
-      console.log(cell)
-      cell.style.backgroundColor = 'green';
-      return "Miss!";
     }
-  },
+  } else {
+    // If the cell doesn't contain a ship, mark it as a miss on the player's gameboard
+    player.board[coordX][coordY] = "M";
+
+    // Update the corresponding cell in the DOM with visual feedback for a miss
+    let thePlayer = player.name.toLowerCase();
+    const cellId = `${thePlayer}Board-${coordX}-${coordY}`;
+    const cell = document.getElementById(cellId);
+    cell.style.backgroundColor = 'green';
+
+    // Return a miss message
+    return "Miss!";
+  }
+},
+
 };
 const createPlayer = (name, fleet) => {
   return {
@@ -232,6 +246,7 @@ cell.addEventListener('mouseout', function() {
             switch (cell.style.backgroundColor) {
                 case 'red':
                     cell.style.backgroundColor = 'red';
+                    cell.textContent = 'X';
                     break;
                 case 'green':
                     cell.style.backgroundColor = 'green';
@@ -308,34 +323,37 @@ function handleCellClick(boardId) {
   });
 }
 
+// Asynchronously place ships on the player's board
 async function placeShips() {
+  // Loop through the player's fleet
   for (var i = 0; i < player1.fleet.length; i++) {
+    // Get the length of the current ship
     currentShipLength = player1.fleet[i].length;
+    // Display ship placement instructions
     var heading = document.getElementById("hiddenHeading");
     heading.style.display = "block";
     heading.textContent = `Admiral, select where you shall place your ${shipNames[i]}.`;
-
+    // Set up a button to rotate the ship
     const button = document.getElementById("rotateButton")
     button.onclick = function() {
       handleButtonClick()
     }
-
+    // Handle ship rotation on button click
     function handleButtonClick() {
       direction = direction === 'horizontal' ? 'vertical' : 'horizontal';
-      };
-
+    };
+    // Wait for the player to click on a cell to place the ship
     let coords = await handleCellClick("playerBoard");
-
-    // Extract x and y from coords
+    // Extract x and y coordinates from the clicked cell
     let [x, y] = coords.split('-').slice(1).map(Number);
-
+    // Attempt to place the ship on the gameboard
     let result = gameboard.receiveShip(x, y, direction, player1.fleet[i], player1);
-    gameboard.printBoard(player1);
+    // Display an alert if ship placement is invalid and decrement the loop counter
     if (result === "You can't place your ship there Admiral!" || result === "A ship already occupies this space Admiral!") {
       alert(`${result}`)
       i--;
     }
-}
+  }
 
   for (var i = 0; i < player2.fleet.length; i++) {
     let x = Math.floor(Math.random() * 10);
@@ -393,28 +411,31 @@ document.getElementById('playButton').addEventListener('click', function() {
 });
 
 
+// Asynchronously handle sending a shot to the computer's gameboard
 async function sendShot() {
+  // Wait for the player to click on a cell on the computer's gameboard
   let rawCoords = await handleCellClick("computerBoard");
 
+  // Extract x and y coordinates from the clicked cell
   let [x, y] = rawCoords.split('-').slice(1).map(Number);
-  gameboard.printBoard(player2);
-
+  // Check for valid coordinates
   if (isNaN(x) || isNaN(y)) {
-    console.log("Please enter valid coordinates")
+    console.log("Please enter valid coordinates");
+    // Recursive call to prompt the player to enter valid coordinates
     return sendShot();
-  }
-
-  else if (x < 0 || x > 9 || y < 0 || y > 9) {
+  } else if (x < 0 || x > 9 || y < 0 || y > 9) {
     console.log("Please enter coordinates within the valid range (0-9)!");
+    // Recursive call to prompt the player to enter coordinates within the valid range
     return sendShot();
-  }
-
-  else if (player2.board[x][y] === "M" || player2.board[x][y] === "H") {
+  } else if (player2.board[x][y] === "M" || player2.board[x][y] === "H") {
     console.log("You've already fired a shot there Admiral! Let's try again...");
+    // Recursive call to prompt the player to choose a different cell
     return sendShot();
   }
+  // Return the valid coordinates for the shot
   return [x, y];
 };
+
 
 const checkIfLegal = (x, y) => {
   if (!player1.board[x] || !player1.board[x][y]) {
