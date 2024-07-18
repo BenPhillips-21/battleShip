@@ -19,7 +19,7 @@
 
 .boards-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     margin-left: 200px;
     margin-right: 200px;
   }
@@ -28,14 +28,14 @@
   .board {
     display: grid;
     grid-template-columns: repeat(10, 26.5px); /* Adjust the size of each cell */
-    gap: 2px;
-    margin: 5px;
+    gap: 8px;
+    margin-bottom: 5px;
   }
   
   /* Style the board cells */
   .cell {
-    width: 25px; /* Adjust the size of each cell */
-    height: 25px;
+    width: 30px; /* Adjust the size of each cell */
+    height: 30px;
     border: 1.65px solid #000;
     background-color: #ededed;
     text-align: center;
@@ -59,24 +59,31 @@
 
 h1 {
     font-family: NorfolkBold-mLV0P;
-    margin-top: 5px;
+    margin-top: 40px;
     margin-bottom: 0;
     text-decoration: underline;
+    font-size: 3rem;
 }
 
 h2 {
+  font-size: 1.8rem;
   font-family: NorfolkPKoWr;
   margin-bottom: 0px;
   margin-left: 6px;
 }
 
+h3 {
+  font-size: 1.5rem;
+}
+
 body {
-  margin: 0; 
-  padding: 0; 
-  background-image: url('ocean.jpg'); 
-  background-size: cover; 
-  background-position: center; 
-  background-repeat: no-repeat; 
+  margin: 0;
+  padding: 0;
+  background-image: url('ocean.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
 }
 
 
@@ -100,10 +107,10 @@ body {
   border-radius: 10px;
   box-sizing: border-box;
   color: #ffffff;
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 3px;
-  padding-bottom: 5px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 7px;
+  padding-bottom: 9px;
   transition: background-color 0.3s ease;
 }
 
